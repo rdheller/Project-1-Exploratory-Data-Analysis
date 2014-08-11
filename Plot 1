@@ -1,0 +1,47 @@
+#setwd to working directory
+getwd()
+setwd("C:/Users/Dick/Desktop/Coursera/Data Analysis Classes/04 - Exploratory Data Analysis")
+
+getwd()
+
+library(plyr)
+library(reshape)
+library(reshape2)
+library(quantmod)
+library(splines)
+library(datasets)
+library(zoo)
+library(lattice)
+library(lubridate)
+
+list.files()
+
+## Read the data
+
+hpcfile <- "household_power_consumption\\household_power_consumption.txt"
+## hpcfile
+hpc <- read.table(hpcfile,sep=";",header=TRUE)
+## head(hpc)
+
+## Select only Feb 1 & 2 for 2007
+        hpcdata <- subset(hpc, Date %in% c("1/2/2007","2/2/2007"))
+        nrow(hpcdata)
+        str(hpcdata)            ## shows that data are factors with "?" as one level
+
+## convert all characters to NA value and the rest to numeric
+for (i in 3:9) {
+        hpcdata[ ,i] <- as.numeric(as.character(hpcdata[ ,i]))
+}
+        ## Clean up the data and take care of day labels
+        hpcdata$datetime <- paste(hpcdata$Date, hpcdata$Time)
+        hpcdata$day <- wday(dmy_hms(hpcdata$datetime), label=TRUE)
+        x <- hpcdata$day
+        v1 <- c(1,1440,2880)
+        v2 <- c("Thurs","Fri","Sat")
+
+
+## Plot 1 and save as a png
+
+png("Plot1.png", 480, 480)
+        hist((hpcdata$Global_active_power), xlab="Global Active Power (kilowatts)", main = "Global Active Power", col="red")
+dev.off()
